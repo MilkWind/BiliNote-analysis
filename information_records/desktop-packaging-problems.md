@@ -50,22 +50,25 @@ This log tracks every problem encountered while packaging BiliNote as a desktop 
 - **Solved by**: Me — ran it with the full PATH; produced `BiliNoteBackend-x86_64-pc-windows-msvc.exe` (27.6 MB) with `.env` and `_internal/` bundled correctly.
 - **Status**: Resolved.
 
-### 6. Tauri build — MSI succeeded, NSIS failed (GitHub download timeout)  ⚠️ CURRENT BLOCKER
+### 6. Tauri build — MSI succeeded, NSIS failed (GitHub download timeout)
 - **Description**: `pnpm tauri build` compiles the Rust app (✅ `app.exe` built) and produces the MSI bundle (✅ `BiliNote_2.4.4_x64_en-US.msi`, 136 MB). But the NSIS step downloads `nsis-3.11.zip` from `github.com/tauri-apps/binary-releases` and the download **repeatedly times out** (`failed to bundle project 'timeout: global'`). Retried 3 times — same failure. The WiX download earlier succeeded on retry, but NSIS never got through.
-- **Attempts so far**:
-  - Retried `pnpm tauri build` → still timed out.
-  - Manually downloaded `nsis-3.11.zip` via `curl` with retries (2.25 MB, succeeded) into `%LOCALAPPDATA%\tauri\`.
-  - Extracted to `%LOCALAPPDATA%\tauri\NSIS\nsis-3.11\`.
-  - Re-ran build → bundler said `NSIS directory is missing some files. Recreating it.` and tried to re-download → timed out again. So my manual cache layout doesn't match what the bundler verifies.
-  - Was fetching tauri-bundler source (tag `tauri-cli-v2.10.1`) to learn the exact expected cache path/layout, but the raw GitHub fetch returned 404 (wrong tag path) right before this log was requested.
-- **Root cause (hypothesis)**: GitHub connectivity from this machine is flaky (WiX and manual curl worked intermittently). The bundler either needs a different cache layout or a reliable download.
-- **Status**: **BLOCKED** — no successful NSIS installer yet, though the MSI installer already exists and is usable.
-- **Remaining options**: figure out the exact NSIS cache layout the bundler expects (place `makensis.exe` etc. correctly); use `TAURI_BUNDLER_TOOLS_GITHUB_MIRROR` env var to point at a mirror/proxy; or ship the MSI as-is.
+- **Root cause**: The bundler (`crates/tauri-bundler/src/bundle/windows/nsis/mod.rs`) does **not** just download the zip — it caches in a specific layout and separately downloads one more plugin DLL. GitHub connectivity on this machine is also flaky (WiX and manual curl worked only intermittently).
+  - Expected cache dir: `%LOCALAPPDATA%\tauri\NSIS` (NOT `nsis-3.11`).
+  - After extraction the bundler verifies 13 required files, including `Plugins/x86-unicode/additional/nsis_tauri_utils.dll`, which is fetched from a **second URL** (`tauri-apps/nsis-tauri-utils` release) and written into that path. Without it, the bundler re-creates the whole NSIS dir and re-downloads → timeout loop.
+- **Fix applied**:
+  1. User extracted `nsis-3.11.zip` to `%LOCALAPPDATA%\tauri\nsis-3.11`.
+  2. I renamed it → `%LOCALAPPDATA%\tauri\NSIS` (matching `nsis_toolset_path`).
+  3. I downloaded `nsis_tauri_utils.dll` (33.5 KB) from `https://github.com/tauri-apps/nsis-tauri-utils/releases/download/nsis_tauri_utils-v0.5.3/nsis_tauri_utils.dll` into `NSIS\Plugins\x86-unicode\additional\`.
+  4. Verified all 13 `NSIS_REQUIRED_FILES` present.
+  5. Re-ran `pnpm tauri build` → NSIS step used cached tools, **no download needed**.
+- **Status**: **RESOLVED** — both installers produced:
+  - `BillNote_frontend\src-tauri\target\release\bundle\msi\BiliNote_2.4.4_x64_en-US.msi` (130 MB)
+  - `BillNote_frontend\src-tauri\target\release\bundle\nsis\BiliNote_2.4.4_x64-setup.exe` (97 MB)
 
 ---
 
 ## Summary
 
-- Solved by me (4): Rust PATH workaround, backend venv + requirements, setuptools pin, PyInstaller backend build.
-- Solved by user (1): FFmpeg installation.
-- **Currently blocking (1)**: NSIS tooling download timeout during `pnpm tauri build`.
+- Solved by me (5): Rust PATH workaround, backend venv + requirements, setuptools pin, PyInstaller backend build, NSIS cache layout fix (rename + missing plugin DLL).
+- Solved by user (2): FFmpeg installation, manual NSIS zip download/extraction.
+- **Blocking**: none — both MSI and NSIS installers built successfully.
