@@ -48,6 +48,9 @@ async def lifespan(app: FastAPI):
         logger.info("[startup 2/5] init_db() — 初始化 SQLite 数据库")
         init_db()
 
+        logger.info("[startup 2.5/5] ensure_ffmpeg — 检查 ffmpeg 可用性并加入 PATH")
+        ensure_ffmpeg_or_raise()
+
         logger.info("[startup 3/5] TranscriberConfigManager — 读取转写器配置")
         # 转写器不再在启动时强制初始化，而是在首次生成笔记时按需创建。
         # 如果配置了不可用的类型（如 mlx-whisper 未安装），会在使用时报错而非静默回退。
