@@ -1,7 +1,6 @@
 # Bilibili Space Pagination — Lessons
 
-Goal: fetch **every video URL** from a Bilibili UP 主's space (e.g. 渡一教育,
-`mid=3494367333452734`) by paginating the `x/space/wbi/arc/search` endpoint.
+Goal: fetch **every video URL** from a Bilibili UP 主's space (e.g. 渡一教育, `mid=3494367333452734`) by paginating the `x/space/wbi/arc/search` endpoint.
 
 Files in this directory:
 
@@ -13,8 +12,7 @@ Files in this directory:
 
 ## 1. The three captured URLs — what actually differs
 
-`page-1.txt`, `page-2.txt`, `page-3.txt` are three *successful* requests to the
-same endpoint for the same UP. They differ in only a few fields:
+`page-1.txt`, `page-2.txt`, `page-3.txt` are three *successful* requests to the same endpoint for the same UP. They differ in only a few fields:
 
 | field | meaning | changes across pages? |
 |---|---|---|
@@ -27,19 +25,13 @@ same endpoint for the same UP. They differ in only a few fields:
 | `dm_img_str` | base64 of WebGL renderer string | no — constant |
 | `dm_cover_img_str` | base64 of GPU string | no — constant |
 
-`dm_img_str` decodes to `WebGL 1.0 (OpenGL ES 2.0 Chromium)` and
-`dm_cover_img_str` to the ANGLE/GPU string — these are **constant**, not random.
-`dm_img_list` is a non-empty array of `{x,y,z,timestamp,k,type}` mouse points.
+`dm_img_str` decodes to `WebGL 1.0 (OpenGL ES 2.0 Chromium)` and `dm_cover_img_str` to the ANGLE/GPU string — these are **constant**, not random. `dm_img_list` is a non-empty array of `{x,y,z,timestamp,k,type}` mouse points.
 
 ## 2. Why editing `pn` breaks the request
 
-`w_rid` is an **MD5 over the entire query string** (all params, sorted) plus a
-secret mixin key. So the URL is *self-signed*: change any single param — `pn`,
-`ps`, even a fingerprint value — and the server recomputes `w_rid`, finds a
-mismatch, and rejects with `-403` (access denied) or `-352` (risk control).
+`w_rid` is an **MD5 over the entire query string** (all params, sorted) plus a secret mixin key. So the URL is *self-signed*: change any single param — `pn`, `ps`, even a fingerprint value — and the server recomputes `w_rid`, finds a mismatch, and rejects with `-403` (access denied) or `-352` (risk control).
 
-You **cannot** take a captured URL and edit `pn=2` to `pn=3`. You must re-sign
-the whole thing.
+You **cannot** take a captured URL and edit `pn=2` to `pn=3`. You must re-sign the whole thing.
 
 ## 3. The WBI signing algorithm
 
@@ -59,12 +51,9 @@ def _sign_wbi(self, params, video_id):
     return params
 ```
 
-Steps: set `wts` → sort params by key → drop `!'()*` from values → urlencode →
-append mixin key → MD5 → that's `w_rid`.
+Steps: set `wts` → sort params by key → drop `!'()*` from values → urlencode → append mixin key → MD5 → that's `w_rid`.
 
-The **mixin key** comes from `GET /x/web-interface/nav` (`data.wbi_img.img_url`
-+ `sub_url`); yt-dlp's `_get_wbi_key` fetches and combines `img_key` + `sub_key`.
-It must be fetched with the login cookie, or the key is wrong and signing fails.
+The **mixin key** comes from `GET /x/web-interface/nav` (`data.wbi_img.img_url` + `sub_url`); yt-dlp's `_get_wbi_key` fetches and combines `img_key` + `sub_key`. It must be fetched with the login cookie, or the key is wrong and signing fails.
 
 ## 4. Risk-control fingerprint params (`dm_img_*`) and HTTP 412
 
@@ -75,48 +64,35 @@ Bilibili's "gaia" anti-crawl checks a device-fingerprint bundle on top of WBI:
 - `dm_img_inter` — element interaction data
 - `web_location` — where the request originated
 
-When these are missing/invalid, the gateway returns **HTTP 412 Precondition
-Failed** (not a normal 4xx). Refreshing cookies alone does not help.
+When these are missing/invalid, the gateway returns **HTTP 412 Precondition Failed** (not a normal 4xx). Refreshing cookies alone does not help.
 
-The trap: upstream yt-dlp sends an **empty** `dm_img_list=[]` and **random
-garbage** base64 for `dm_img_str`, which the risk control rejects intermittently.
-A real browser sends a non-empty mouse list + constant WebGL/GPU strings. The
-script patches `_sign_wbi` to inject realistic values before signing (see
-`_patch_space_fingerprint` in the script).
+The trap: upstream yt-dlp sends an **empty** `dm_img_list=[]` and **random garbage** base64 for `dm_img_str`, which the risk control rejects intermittently. A real browser sends a non-empty mouse list + constant WebGL/GPU strings. The script patches `_sign_wbi` to inject realistic values before signing (see `_patch_space_fingerprint` in the script).
 
-Key insight: the 412 is **random** when the fingerprint/cookies are incomplete.
-The same request can succeed once and fail a minute later.
+Key insight: the 412 is **random** when the fingerprint/cookies are incomplete. The same request can succeed once and fail a minute later.
 
 ## 5. Determining the total page count
 
-You almost never have to *guess* the total. Every `arc/search` response carries
-it:
+You almost never have to *guess* the total. Every `arc/search` response carries it:
 
 ```json
 { "code": 0, "data": { "page": { "pn": 1, "ps": 30, "count": 1230 },
                        "list": { "vlist": [ ... ] } } }
 ```
 
-So `page_count = ceil(count / ps)`. yt-dlp reads this from page 1
-(`BilibiliSpaceVideoIE.get_metadata`) and pages `pn = 1 … page_count` lazily.
+So `page_count = ceil(count / ps)`. yt-dlp reads this from page 1 (`BilibiliSpaceVideoIE.get_metadata`) and pages `pn = 1 … page_count` lazily.
 
-**Robust rule:** combine the count-derived plan with an empty-page sentinel —
-stop if a page returns an empty `vlist` (the UP may have posted/removed videos
-mid-scrape, or `count` includes a filtered tab).
+**Robust rule:** combine the count-derived plan with an empty-page sentinel — stop if a page returns an empty `vlist` (the UP may have posted/removed videos mid-scrape, or `count` includes a filtered tab).
 
 ## 6. How the script paginates
 
-`fetch_space_videos.py` delegates to yt-dlp's `BilibiliSpaceVideoIE`, which per
-page:
+`fetch_space_videos.py` delegates to yt-dlp's `BilibiliSpaceVideoIE`, which per page:
 
-- hits `https://api.bilibili.com/x/space/wbi/arc/search` with `pn=page_idx+1`,
-  `ps=30`, `order=pubdate`, `mid=…`;
+- hits `https://api.bilibili.com/x/space/wbi/arc/search` with `pn=page_idx+1`, `ps=30`, `order=pubdate`, `mid=…`;
 - injects `dm_img_*` + `web_location`;
 - calls `_sign_wbi` to recompute `wts` + `w_rid` **for every page**;
 - yields each video as `url_result(https://www.bilibili.com/video/{bvid})`.
 
-The script runs with `extract_flat="in_playlist"` so entries are collected as
-bare URLs without resolving each video page. Relevant flags:
+The script runs with `extract_flat="in_playlist"` so entries are collected as bare URLs without resolving each video page. Relevant flags:
 
 - `--limit N` → `playlistend=N` (stops pagination early, avoids hammering).
 - `--sleep S` → `sleep_interval_requests=S` (throttle between requests).
@@ -125,24 +101,14 @@ bare URLs without resolving each video page. Relevant flags:
 
 ## 7. Cookie requirements
 
-- The cookie is read from `fetch_config.json` (bare value, no key — the script
-  prefixes `SESSDATA=` automatically), with fallback to `config/downloader.json`.
-- **SESSDATA alone is not enough.** Reliable access needs the **full cookie
-  string**: `buvid3`, `buvid4`, `b_nut`, `_uuid`, `SESSDATA`, `bili_jct`, … The
-  `dm_img_*` fingerprint is tied to the device identity carried by `buvid*`, so
-  with only `SESSDATA` the server can't reconcile them and 412s become a
-  coin-flip. Capture it in a logged-in browser: DevTools → Application →
-  Cookies → `bilibili.com` → right-click → "Copy all".
+- The cookie is read from `fetch_config.json` (bare value, no key — the script prefixes `SESSDATA=` automatically), with fallback to `config/downloader.json`.
+- **SESSDATA alone is not enough.** Reliable access needs the **full cookie string**: `buvid3`, `buvid4`, `b_nut`, `_uuid`, `SESSDATA`, `bili_jct`, … The `dm_img_*` fingerprint is tied to the device identity carried by `buvid*`, so with only `SESSDATA` the server can't reconcile them and 412s become a coin-flip. Capture it in a logged-in browser: DevTools → Application → Cookies → `bilibili.com` → right-click → "Copy all".
 
 ## 8. Anti-crawl / rate-limiting — practical rules
 
-- **Throttle.** Fire pages back-to-back and the later pages return 412. Use
-  `--sleep` (≥ 5s), and don't re-run a failing fetch in a tight loop — retries
-  while already flagged make it worse.
-- **A burst can flag the session/IP** so that even the first page then 412s.
-  Back off and wait rather than hammering.
-- **Diagnose scope:** `GET /x/web-interface/nav` returning 200 proves the IP is
-  reachable; 412 on `arc/search` is endpoint risk-control, not a network ban.
+- **Throttle.** Fire pages back-to-back and the later pages return 412. Use `--sleep` (≥ 5s), and don't re-run a failing fetch in a tight loop — retries while already flagged make it worse.
+- **A burst can flag the session/IP** so that even the first page then 412s. Back off and wait rather than hammering.
+- **Diagnose scope:** `GET /x/web-interface/nav` returning 200 proves the IP is reachable; 412 on `arc/search` is endpoint risk-control, not a network ban.
 
 ## 9. Troubleshooting
 
