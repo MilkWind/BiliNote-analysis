@@ -14,6 +14,26 @@ curl -s http://localhost:8483/api/get_all_providers | python -c "import sys,json
 
 If not, run `bili-note-init`.
 
+### Bilibili Cookie
+
+Bilibili videos require login cookies for reliable download. Without cookies, yt-dlp returns HTTP 412 and audio extraction fails. **Required for `video_understanding: true`** (video download needs auth) and strongly recommended for all bilibili tasks.
+
+Check current cookie status:
+```bash
+curl -s http://localhost:8483/api/get_downloader_cookie/bilibili | python -c "import sys,json; d=json.load(sys.stdin); print('SET' if d.get('data') and d['data'].get('cookie') else 'MISSING')"
+```
+
+If `MISSING`, ask the user for their bilibili cookies. Open bilibili.com in a logged-in browser, then copy the full cookie string from DevTools → Application → Cookies → bilibili.com → right-click any cookie → "Copy all". The cookie **must include `SESSDATA`** — this is the session auth token. Without it, downloads will fail.
+
+Set the cookie:
+```bash
+curl -s -X POST http://localhost:8483/api/update_downloader_cookie \
+  -H "Content-Type: application/json" \
+  -d '{"platform": "bilibili", "cookie": "<full-cookie-string>"}'
+```
+
+Or ask the user to configure it via Settings page in the frontend (`http://localhost:3015`).
+
 ## Phase 1 — Confirm Per-Request Settings
 
 Ask these four things before submitting.
@@ -71,6 +91,20 @@ Default `false`. Ask: "是否启用视频理解模型？（不强求启用）"
 If yes, also set:
 - `video_interval`: 截帧间隔（秒），default 30
 - `grid_size`: 缩略图网格，e.g. `[4, 4]`
+
+**Important**: Video understanding requires downloading the full video file (not just audio). For bilibili, this means **bilibili cookies with SESSDATA must be configured** (see Pre-condition above). Without valid login cookies, the video download will fail with HTTP 412. The chosen model must also be vision-capable (e.g. `qwen-vl-plus`, `qwen3-vl-flash`, `gpt-4o`).
+
+### 5. 模型选择注意事项
+
+Video understanding requires a **single model** that accepts both text and images (vision-language model). The same model handles transcript summarization AND frame analysis in one call — there is no split-provider pipeline.
+
+- `video_understanding: false` → any model works (text-only is fine)
+- `video_understanding: true` → must pick a vision-capable model (e.g., `qwen-vl-plus`, `qwen3-vl-flash`, `gpt-4o`)
+
+On Qwen MaaS, check available VL models:
+```bash
+curl -s http://localhost:8483/api/model_list/qwen | python -c "import sys,json; [print(m['id']) for m in json.load(sys.stdin)['data']['models']]" | grep -iE 'vl|vision'
+```
 
 ## Phase 2 — Locate Video List
 
@@ -173,3 +207,5 @@ Git Bash garbles Chinese output. Read files directly.
 | `ffprobe and ffmpeg not found` | FFmpeg missing | Set `FFMPEG_BIN_PATH` in `.env`, restart backend |
 | Transcriber model not ready | fast-whisper model not downloaded | Download model or switch to `bcut` |
 | Task stuck PENDING | Queue full | Wait, or increase `TASK_MAX_WORKERS` |
+| `HTTP Error 412: Precondition Failed` | Bilibili requires auth | Set bilibili cookie with SESSDATA (see Pre-condition) |
+| `unable to obtain file audio codec with ffprobe` | Bilibili download blocked (no cookie) or rate-limited | Set valid bilibili cookies, avoid submitting many tasks for the same video simultaneously |
