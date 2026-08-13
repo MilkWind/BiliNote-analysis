@@ -126,6 +126,16 @@ def task_status(task_id: str) -> str | None:
         return None
 
 
+def _parse_limit() -> int:
+    for i, a in enumerate(sys.argv):
+        if a == "--limit" and i + 1 < len(sys.argv):
+            try:
+                return int(sys.argv[i + 1])
+            except ValueError:
+                return 0
+    return 0
+
+
 def main() -> int:
     urls = [u.strip() for u in INPUT.read_text(encoding="utf-8").splitlines() if u.strip()]
     wait_for_drain()
@@ -137,7 +147,11 @@ def main() -> int:
     # do NOT skip previously-failed URLs: retry them
     todo = [u for u in urls if bv_id(u) not in skip_ids]
 
-    print(f"[plan] total={len(urls)} done_db={len(done_db)} done_local={len(done_local)} todo={len(todo)}",
+    limit = _parse_limit()
+    if limit and limit > 0:
+        todo = todo[:limit]
+
+    print(f"[plan] total={len(urls)} done_db={len(done_db)} done_local={len(done_local)} todo={len(todo)} limit={limit or 'none'}",
           file=sys.stderr, flush=True)
 
     ok = err = 0
