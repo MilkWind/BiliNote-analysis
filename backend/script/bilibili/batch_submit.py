@@ -14,11 +14,9 @@ Dedup / resume:
 - Before starting, waits for any already-queued tasks (from a prior burst) to drain.
 """
 import json
-import re
 import sqlite3
 import sys
 import time
-import urllib.error
 import urllib.request
 from pathlib import Path
 
