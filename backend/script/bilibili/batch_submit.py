@@ -23,6 +23,7 @@ import urllib.request
 from pathlib import Path
 
 API = "http://localhost:8483/api/generate_note"
+# These files' name are dynamic in different video understanding tasks.
 INPUT = Path("../goal_videos/渡一.txt")
 DONE = Path("../goal_videos/渡一_done.txt")
 FAILED = Path("../goal_videos/渡一_failed.txt")
