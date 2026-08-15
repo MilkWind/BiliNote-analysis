@@ -427,7 +427,8 @@ class NoteGenerator:
         if screenshot and not grid_size:
             grid_size = [2, 2]
 
-        frame_interval = video_interval if video_interval and video_interval > 0 else 6
+        # 视频截帧间隔
+        frame_interval = video_interval if video_interval and video_interval > 0 else 3
         if need_video:
             try:
                 logger.info("开始下载视频")
