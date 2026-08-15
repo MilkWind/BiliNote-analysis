@@ -315,6 +315,7 @@ cython_debug/
 /backend/logs/
 /backend/note_results
 /backend/download_audios
+/backend/transcription_files
 /backend/models
 /backend/.idea/*
 /backend/bili_note.db
