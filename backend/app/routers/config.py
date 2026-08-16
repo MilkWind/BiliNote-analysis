@@ -53,6 +53,7 @@ AVAILABLE_TRANSCRIBER_TYPES = [
     {"value": "bcut", "label": "必剪（在线）"},
     {"value": "kuaishou", "label": "快手（在线）"},
     {"value": "groq", "label": "Groq（在线）"},
+    {"value": "volc-seedasr", "label": "火山引擎 SeedASR（在线）"},
     {"value": "mlx-whisper", "label": "MLX Whisper（仅macOS）"},
 ]
 
