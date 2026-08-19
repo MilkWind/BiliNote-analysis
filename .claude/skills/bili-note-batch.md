@@ -1,6 +1,6 @@
 ---
 name: bili-note-batch
-description: Batch process Bilibili videos into AI-generated notes — confirms per-request settings (style, format, provider/model, video understanding), submits and monitors tasks.
+description: Batch process Bilibili videos into AI-generated notes — confirms transcriber engine and per-request settings (style, format, provider/model, video understanding), submits and monitors tasks.
 ---
 
 # BiliNote Batch Processing
@@ -34,7 +34,39 @@ curl -s -X POST http://localhost:8483/api/update_downloader_cookie \
 
 Or ask the user to configure it via Settings page in the frontend (`http://localhost:3015`).
 
-## Phase 1 — Confirm Per-Request Settings
+## Phase 1 — Choose Transcriber Engine
+
+The transcriber is a **global setting** (applies to all tasks in the batch). Confirm it before submitting.
+
+Check the current engine:
+```bash
+curl -s http://localhost:8483/api/transcriber_config | python -c "import sys,json; d=json.load(sys.stdin)['data']; print('transcriber:', d['transcriber_type'], '| whisper model:', d['whisper_model_size'])"
+```
+
+Ask the user which engine to use. Available options:
+
+| Value | Label | Key / Model required |
+|---|---|---|
+| `volc-seedasr` | 火山引擎 SeedASR（在线） | `VOLC_SEEDASR_API_KEY` in `.env` |
+| `groq` | Groq（在线） | Groq API key in provider config |
+| `bcut` | 必剪（在线） | none |
+| `kuaishou` | 快手（在线） | none |
+| `fast-whisper` | Faster Whisper（本地） | local model download (default `tiny`) |
+| `mlx-whisper` | MLX Whisper（仅macOS） | macOS only |
+
+Switch engine (persisted to `backend/config/transcriber.json`, takes effect on the **next** task — no code change or backend restart needed to switch engines):
+```bash
+curl -s -X POST http://localhost:8483/api/transcriber_config \
+  -H "Content-Type: application/json" \
+  -d '{"transcriber_type": "<TYPE>"}' | python -m json.tool
+```
+
+Caveats:
+- **`volc-seedasr`**: if `VOLC_SEEDASR_API_KEY` is not set in `.env`, transcription fails with `VOLC_SEEDASR_API_KEY 未配置`. Adding the key requires editing `.env` and **restarting the backend** — the key is read once at transcriber init.
+- **Online engines** (`volc-seedasr`, `groq`, `bcut`, `kuaishou`) are always ready — no local model download.
+- **`fast-whisper` / `mlx-whisper`** need their model downloaded first; a batch against a missing model fails with `转写模型 ... 尚未下载就绪` (download via `POST /api/transcriber_download` or the frontend settings page).
+
+## Phase 2 — Confirm Per-Request Settings
 
 Ask these four things before submitting.
 
@@ -106,7 +138,7 @@ On Qwen MaaS, check available VL models:
 curl -s http://localhost:8483/api/model_list/qwen | python -c "import sys,json; [print(m['id']) for m in json.load(sys.stdin)['data']['models']]" | grep -iE 'vl|vision'
 ```
 
-## Phase 2 — Locate Video List
+## Phase 3 — Locate Video List
 
 Common locations:
 - `goal_videos/*.txt`
@@ -116,7 +148,7 @@ Common locations:
 grep -c 'http' <file>
 ```
 
-## Phase 3 — Verify One Task First
+## Phase 4 — Verify One Task First
 
 ```bash
 curl -s -X POST http://localhost:8483/api/generate_note \
@@ -142,7 +174,7 @@ curl -s http://localhost:8483/api/task_status/<task_id> | python -m json.tool
 
 If RUNNING, configuration is correct. If failed immediately, fix before proceeding.
 
-## Phase 4 — Submit Batch
+## Phase 5 — Submit Batch
 
 ```bash
 count=0
@@ -159,7 +191,7 @@ done < urls.txt
 
 ~1-2s per task. Resume interrupted batch: `tail -n +<line> urls.txt`.
 
-## Phase 5 — Monitor Progress
+## Phase 6 — Monitor Progress
 
 ```bash
 cd backend/note_results
