@@ -50,6 +50,8 @@ BASE_PROMPT = '''
 
 LINK='''
 9. **Add time markers**: THIS IS IMPORTANT For every main heading (`##`), append the starting time of that segment using the format ,start with *Content ,eg: `*Content-[mm:ss]`.
+   NOTE: `mm` is the total minutes elapsed. For videos longer than 1 hour, `mm` may exceed 59 (e.g. 1h30m is `90:00`). Do NOT drop the hour.
+
 
 
 '''

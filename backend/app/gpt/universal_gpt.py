@@ -12,7 +12,6 @@ from app.gpt.prompt import BASE_PROMPT, AI_SUM, SCREENSHOT, LINK, MERGE_PROMPT
 from app.gpt.utils import fix_markdown
 from app.gpt.request_chunker import RequestChunker
 from app.models.transcriber_model import TranscriptSegment
-from datetime import timedelta
 from typing import List
 
 
@@ -31,7 +30,9 @@ class UniversalGPT(GPT):
         self._retry_base_backoff = float(os.getenv("OPENAI_RETRY_BACKOFF_SECONDS", "1.5"))
 
     def _format_time(self, seconds: float) -> str:
-        return str(timedelta(seconds=int(seconds)))[2:]
+        total_seconds = max(0, int(seconds))
+        minutes, sec = divmod(total_seconds, 60)
+        return f"{minutes:02d}:{sec:02d}"
 
     def _build_segment_text(self, segments: List[TranscriptSegment]) -> str:
         return "\n".join(
