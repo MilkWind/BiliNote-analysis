@@ -139,7 +139,13 @@ def _load_cookie_from_config() -> str | None:
 
 
 def resolve_space_url(target: str) -> str:
-    """Accept a bare mid or a full space URL, return a canonical space URL."""
+    """Accept a bare mid, a space URL, or a 合集/season list URL.
+
+    Space URLs are canonicalised to ``.../<mid>/video``. Season/collection
+    URLs (``.../<mid>/lists/<sid>?type=season``) are passed through untouched,
+    because yt-dlp resolves them to just that collection's videos instead of
+    the whole space.
+    """
     target = target.strip()
     if target.isdigit():
         mid = target
@@ -148,6 +154,9 @@ def resolve_space_url(target: str) -> str:
         if not m:
             raise SystemExit(f"无法从 '{target}' 解析出 mid，请输入空间链接或纯数字 mid")
         mid = m.group(1)
+        if "/lists/" in target:
+            # Keep the collection id + query so yt-dlp fetches only that 合集.
+            return "https://" + target.split("://", 1)[-1]
     return f"https://space.bilibili.com/{mid}/video"
 
 
