@@ -33,6 +33,7 @@ import re
 import sys
 import tempfile
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yt_dlp
@@ -219,6 +220,73 @@ def fetch_video_urls(
     )
 
 
+# ---------------------------------------------------------------------------
+# Date-filtered fetching (--since)
+#
+# yt-dlp's flat playlist mode drops the upload date, so the ``--since`` filter
+# reads ``x/space/wbi/arc/search`` directly. The ``created`` field of each
+# ``vlist`` item is a unix timestamp (seconds). We reuse the extractor's
+# ``_sign_wbi`` (patched above with a realistic fingerprint) to sign every page.
+# ---------------------------------------------------------------------------
+
+def _parse_since(value: str) -> int:
+    """'YYYY-MM-DD' interpreted as Beijing time -> unix seconds."""
+    dt = datetime.strptime(value.strip(), "%Y-%m-%d").replace(
+        tzinfo=timezone(timedelta(hours=8))
+    )
+    return int(dt.timestamp())
+
+
+def _fetch_bvids_with_dates(mid: str, cookie: str | None, cookiefile: str | None,
+                            sleep: float, retries: int) -> list[tuple[str, int]]:
+    """Return [(bvid, created_unix), ...] newest-first for a space's /video tab."""
+    from yt_dlp.extractor.bilibili import BilibiliSpaceVideoIE
+
+    last_err: Exception | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            rows: list[tuple[str, int]] = []
+            with yt_dlp.YoutubeDL(_build_opts(cookie, cookiefile, sleep, 0)) as ydl:
+                ie = BilibiliSpaceVideoIE(ydl)
+                page = 1
+                while True:
+                    params = ie._sign_wbi({
+                        "mid": mid, "ps": 30, "pn": page, "order": "pubdate",
+                        "platform": "web", "web_location": 1550101,
+                    }, None)
+                    data = ie._download_json(
+                        "https://api.bilibili.com/x/space/wbi/arc/search", mid,
+                        query=params,
+                        headers={"Referer": f"https://space.bilibili.com/{mid}/video"},
+                    )
+                    vlist = (((data.get("data") or {}).get("list") or {}).get("vlist")) or []
+                    if not vlist:
+                        break
+                    for v in vlist:
+                        rows.append((v["bvid"], int(v.get("created", 0))))
+                    page += 1
+                    time.sleep(sleep)
+            return rows
+        except Exception as e:  # noqa: BLE001
+            last_err = e
+            wait = 5 * attempt
+            print(f"第 {attempt} 次取数失败（{e}），{wait}s 后重试…", file=sys.stderr)
+            time.sleep(wait)
+    raise SystemExit(f"未获取到任何视频。可能原因：cookie 缺失/失效、被风控拦截。最后错误：{last_err}")
+
+
+def fetch_video_urls_since(space_url: str, since_ts: int, cookie: str | None,
+                           cookiefile: str | None, sleep: float,
+                           retries: int) -> list[str]:
+    """Videos published on/after ``since_ts`` (newest-first, pubdate order)."""
+    m = re.search(r"space\.bilibili\.com/(\d+)", space_url)
+    if not m:
+        raise SystemExit("--since 仅支持普通空间链接（.../<mid>/video）")
+    mid = m.group(1)
+    rows = _fetch_bvids_with_dates(mid, cookie, cookiefile, sleep, retries)
+    return [f"https://www.bilibili.com/video/{bv}" for bv, created in rows if created >= since_ts]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="拉取 B 站 UP 主空间全部投稿视频 URL")
     parser.add_argument("target", help="空间链接（https://space.bilibili.com/<mid>/video）或纯数字 mid")
@@ -230,6 +298,7 @@ def main() -> int:
     parser.add_argument("--retries", type=int, default=3, help="整次拉取失败时的重试次数，默认 3")
     parser.add_argument("--bvid", action="store_true", help="仅输出 BV 号（不含域名前缀）")
     parser.add_argument("--limit", type=int, default=0, help="最多输出 N 条（0 表示全部）")
+    parser.add_argument("--since", help="只输出该日期（YYYY-MM-DD，北京时间）及之后发布的视频；仅支持普通空间链接")
     args = parser.parse_args()
 
     _patch_space_fingerprint()
@@ -240,7 +309,12 @@ def main() -> int:
         # Bare SESSDATA value (no key) -> turn it into a valid cookie.
         cookie = f"SESSDATA={cookie}"
 
-    urls = fetch_video_urls(space_url, args.order, cookie, args.cookie_file, args.sleep, args.limit, args.retries)
+    if args.since:
+        urls = fetch_video_urls_since(
+            space_url, _parse_since(args.since), cookie, args.cookie_file, args.sleep, args.retries
+        )
+    else:
+        urls = fetch_video_urls(space_url, args.order, cookie, args.cookie_file, args.sleep, args.limit, args.retries)
 
     lines = [u.rsplit("/", 1)[-1] for u in urls] if args.bvid else urls
     text = "\n".join(lines) + ("\n" if lines else "")

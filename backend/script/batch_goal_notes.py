@@ -44,6 +44,7 @@ NOTE_DIR = BACKEND / "note_results"
 DB = BACKEND / "bili_note.db"
 API = "http://localhost:8483/api/generate_note"
 PROGRESS = GOAL / "_goal_notes_progress.jsonl"
+SKIP = GOAL / "_goal_notes_skip.txt"
 LOG = GOAL / "_goal_notes_run.log"
 
 ACTIVE_STATUSES = {"PENDING", "PARSING", "DOWNLOADING", "TRANSCRIBING",
@@ -63,6 +64,8 @@ MANIFEST = [
     {"file": "前端小卒 web碎碎念合集", "style": "tutorial", "vu": False, "append_transcript": False},
     {"file": "程序员小Dan 软件架构师合集", "style": "detailed", "vu": False, "append_transcript": True},
     {"file": "程序员小Dan 计算机专业面试总结合集", "style": "detailed", "vu": False, "append_transcript": True},
+    {"file": "网络小白_Uncle城", "style": "tutorial", "vu": True, "append_transcript": True},
+    {"file": "你是神魔恋恋恋恋", "style": "detailed", "vu": False, "append_transcript": True},
 ]
 
 TRANSCRIPT_HEADER = "## 文稿转写"
@@ -115,6 +118,16 @@ def record(rec: dict) -> None:
     rec["ts"] = time.strftime("%Y-%m-%d %H:%M:%S")
     with PROGRESS.open("a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+
+def skip_bvs() -> set[str]:
+    if not SKIP.exists():
+        return set()
+    return {
+        ln.strip()
+        for ln in SKIP.read_text(encoding="utf-8").splitlines()
+        if ln.strip() and not ln.lstrip().startswith("#")
+    }
 
 
 def build_manifest() -> list[dict]:
@@ -250,14 +263,15 @@ def main() -> int:
         items = [it for it in items if args.only in it["file"]]
     done_db = done_from_db()
     done_prog = progress_success()
-    todo = [it for it in items if it["bv"] not in done_db and it["bv"] not in done_prog]
+    skip = skip_bvs()
+    todo = [it for it in items if it["bv"] not in done_db and it["bv"] not in done_prog and it["bv"] not in skip]
     if args.limit:
         todo = todo[: args.limit]
     if args.verify:
         todo = todo[:1]
 
     log(f"[plan] sources={len(MANIFEST)} total={len(items)} done_db={len(done_db)} "
-        f"done_progress={len(done_prog)} todo={len(todo)} concurrency={args.concurrency}")
+        f"done_progress={len(done_prog)} skipped={len(skip)} todo={len(todo)} concurrency={args.concurrency}")
 
     if args.dry_run:
         for it in todo[:20]:
