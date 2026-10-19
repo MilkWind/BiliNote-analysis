@@ -1,11 +1,1 @@
-D:\development-projects\personal-projects\persional-knowledge\notes\business\KAPI卡皮品牌研究社 KAPI卡皮品牌研究社 https://space.bilibili.com/3546862470564210?spm_id_from=333.337.0.0 详细风格+音频解析+文稿转写
-D:\development-projects\personal-projects\persional-knowledge\notes\society\地球有点莽 地球有点莽 https://space.bilibili.com/3546568791690209?spm_id_from=333.337.0.0 详细风格+音频解析+文稿转写
-D:\development-projects\personal-projects\persional-knowledge\notes\technology\fullstack\AI\为什么叫QQ 为什么叫QQ 硬核拆解系列合集 https://space.bilibili.com/280534030/lists/7718894?type=season 详细风格+音频解析+文稿转写
-D:\development-projects\personal-projects\persional-knowledge\notes\life\周展- 周展- https://space.bilibili.com/3546980957555517?spm_id_from=333.337.0.0 详细风格+视频理解
-D:\development-projects\personal-projects\persional-knowledge\notes\business\汤明月说 汤明月说 https://space.bilibili.com/102115345?spm_id_from=333.337.0.0 详细风格+音频解析+文稿转写
-D:\development-projects\personal-projects\persional-knowledge\notes\business\大闫叨叨 https://space.bilibili.com/3632306724014995?spm_id_from=333.1391.0.0 详细风格+音频解析
-D:\development-projects\personal-projects\persional-knowledge\notes\technology\fullstack\frontend\前端小卒 前端小卒 web碎碎念合集 https://space.bilibili.com/17875980/lists/7411559?type=season 教程风格+音频解析
-D:\development-projects\personal-projects\persional-knowledge\notes\technology\fullstack\backend\程序员小Dan\软件架构师合集 程序员小Dan 软件架构师合集 https://space.bilibili.com/3493134174521912/lists/9203402?type=season 详细风格+音频解析+文稿转写
-D:\development-projects\personal-projects\persional-knowledge\notes\technology\fullstack\backend\程序员小Dan\计算机专业面试总结合集 程序员小Dan 计算机专业面试总结合集 https://space.bilibili.com/3493134174521912/lists/6589357?type=season 详细风格+音频解析+文稿转写
-D:\development-projects\personal-projects\persional-knowledge\notes\technology\fullstack\network\网络小白_Uncle城 网络小白_Uncle城 https://space.bilibili.com/37858284?spm_id_from=333.337.0.0 教程风格+视频理解+文稿转写，只解析2025年2月及之后的视频
-D:\development-projects\personal-projects\persional-knowledge\notes\society\你是神魔恋恋恋恋 你是神魔恋恋恋恋 https://space.bilibili.com/340966360?spm_id_from=333.337.0.0 详细风格+音频解析+文稿转写
+程序员方格 https://space.bilibili.com/3546980777199728
