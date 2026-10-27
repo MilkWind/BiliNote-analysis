@@ -17,12 +17,15 @@ def get_builtin_providers_path():
 
 
 def seed_default_providers():
+    """Insert any missing built-in providers without touching existing rows.
+
+    Runs on every startup so that built-ins added in later releases (e.g. Ark)
+    show up for existing installations, while user-configured API keys and
+    base URLs are preserved. Previously this only seeded when the table was
+    empty, so upgrades never gained new built-ins.
+    """
     db = next(get_db())
     try:
-        if db.query(Provider).count() > 0:
-            logger.info("Providers already exist, skipping seed.")
-            return
-
         json_path = get_builtin_providers_path()
         try:
             with open(json_path, 'r', encoding='utf-8') as f:
@@ -31,7 +34,11 @@ def seed_default_providers():
             logger.error(f"Failed to read builtin_providers.json: {e}")
             return
 
+        existing_ids = {row[0] for row in db.query(Provider.id).all()}
+        added = 0
         for p in providers:
+            if p['id'] in existing_ids:
+                continue
             db.add(Provider(
                 id=p['id'],
                 name=p['name'],
@@ -41,8 +48,13 @@ def seed_default_providers():
                 type=p['type'],
                 enabled=p.get('enabled', 1)
             ))
+            added += 1
         db.commit()
-        logger.info("Default providers seeded successfully.")
+
+        if added:
+            logger.info(f"Added {added} missing default provider(s).")
+        else:
+            logger.info("All default providers already exist, skipping seed.")
     except Exception as e:
         logger.error(f"Failed to seed default providers: {e}")
     finally:

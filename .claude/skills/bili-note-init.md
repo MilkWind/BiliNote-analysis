@@ -46,7 +46,7 @@ Note: `volc-seedasr` uses resource `volc.bigasr.auc` by default (configurable vi
 
 Ask: "用哪个 LLM 供应商？需要提供 API key。"
 
-Common: `deepseek`, `openai`, `qwen`, `Claude`, `gemini`, `groq`, `ollama`.
+Common: `deepseek`, `openai`, `qwen`, `ark`, `Claude`, `gemini`, `groq`, `ollama`.
 
 ## Phase 2 — Create/Update .env
 

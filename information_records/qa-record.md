@@ -195,15 +195,16 @@ However, **none of these backend exports are accessible to users** because there
 
 ## Q9: How many LLM providers can I choose for video understanding?
 
-**3 out of 7 built-in providers support vision, plus any custom OpenAI-compatible vision API you add.**
+**4 out of 8 built-in providers support vision, plus any custom OpenAI-compatible vision API you add.**
 
-### 7 Built-in Providers
+### 8 Built-in Providers
 
 | Provider | Base URL | Has Vision? |
 |---|---|---|
 | **OpenAI** | `api.openai.com/v1` | Yes — GPT-4V, GPT-4o, GPT-4.1 |
 | **DeepSeek** | `api.deepseek.com` | No — text-only (confirmed by issue #282) |
 | **Qwen** | `dashscope.aliyuncs.com/compatible-mode/v1` | Yes — Qwen-VL models via compatible endpoint |
+| **Volcengine Ark** | `ark.cn-beijing.volces.com/api/v3` | Yes — Doubao Seed 2.1 / vision models |
 | **Gemini** | `generativelanguage.googleapis.com/v1beta/openai/` | Yes — Gemini Flash/Pro via OpenAI-compatible endpoint |
 | **Groq** | `api.groq.com/openai/v1` | No — specializes in fast text inference |
 | **Ollama** | `127.0.0.1:11434/v1` | Depends on model — llama3.2-vision etc. may work |
@@ -217,7 +218,7 @@ Users can add any custom provider via `POST /add_provider` with their own `api_k
 
 All providers route through `UniversalGPT.create_messages()`. When `video_understanding=true` and `video_img_urls` is populated, it builds the OpenAI multimodal content array format. When empty, it falls back to plain string. There is **no provider-level gate** that checks vision capability before sending images — if you enable video understanding with a text-only model, the API call will fail with a provider error.
 
-**Practical answer**: For video understanding, you need OpenAI, Gemini, Qwen (VL models), or a custom OpenAI-compatible vision API. That's 3 usable out of 7 built-in providers.
+**Practical answer**: For video understanding, you need OpenAI, Gemini, Qwen (VL models), Volcengine Ark (Doubao), or a custom OpenAI-compatible vision API. That's 4 usable out of 8 built-in providers.
 
 ---
 

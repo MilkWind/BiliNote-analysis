@@ -124,14 +124,14 @@ If yes, also set:
 - `video_interval`: 截帧间隔（秒），default 30
 - `grid_size`: 缩略图网格，e.g. `[4, 4]`
 
-**Important**: Video understanding requires downloading the full video file (not just audio). For bilibili, this means **bilibili cookies with SESSDATA must be configured** (see Pre-condition above). Without valid login cookies, the video download will fail with HTTP 412. The chosen model must also be vision-capable (e.g. `qwen-vl-plus`, `qwen3-vl-flash`, `gpt-4o`).
+**Important**: Video understanding requires downloading the full video file (not just audio). For bilibili, this means **bilibili cookies with SESSDATA must be configured** (see Pre-condition above). Without valid login cookies, the video download will fail with HTTP 412. The chosen model must also be vision-capable (e.g. `qwen-vl-plus`, `qwen3-vl-flash`, `gpt-4o`, `doubao-seed-2-1-pro-260915`).
 
 ### 5. 模型选择注意事项
 
 Video understanding requires a **single model** that accepts both text and images (vision-language model). The same model handles transcript summarization AND frame analysis in one call — there is no split-provider pipeline.
 
 - `video_understanding: false` → any model works (text-only is fine)
-- `video_understanding: true` → must pick a vision-capable model (e.g., `qwen-vl-plus`, `qwen3-vl-flash`, `gpt-4o`)
+- `video_understanding: true` → must pick a vision-capable model (e.g., `qwen-vl-plus`, `qwen3-vl-flash`, `gpt-4o`, `doubao-seed-2-1-pro-260915`)
 
 On Qwen MaaS, check available VL models:
 ```bash
@@ -163,9 +163,13 @@ curl -s -X POST http://localhost:8483/api/generate_note \
     "format": [...],
     "screenshot": false,
     "link": false,
-    "video_understanding": false
+    "video_understanding": <true|false>,
+    "video_interval": <30>,
+    "grid_size": <[4, 4]>
   }' | python -m json.tool
 ```
+
+Set `video_understanding: true` plus `video_interval`/`grid_size` when smoke-testing video understanding. This makes the test download the full video, so bilibili cookies must be valid.
 
 Wait 30-60s:
 ```bash
@@ -182,12 +186,14 @@ while IFS= read -r url; do
   [ -z "$url" ] && continue
   curl -s -X POST http://localhost:8483/api/generate_note \
     -H "Content-Type: application/json" \
-    -d "{\"video_url\": \"$url\", \"platform\": \"bilibili\", \"quality\": \"fast\", \"model_name\": \"MODEL\", \"provider_id\": \"PROVIDER\", \"style\": \"STYLE\", \"format\": [...], \"screenshot\": false, \"link\": false, \"video_understanding\": false}" \
+    -d "{\"video_url\": \"$url\", \"platform\": \"bilibili\", \"quality\": \"fast\", \"model_name\": \"MODEL\", \"provider_id\": \"PROVIDER\", \"style\": \"STYLE\", \"format\": [...], \"screenshot\": false, \"link\": false, \"video_understanding\": <true|false>, \"video_interval\": <30>, \"grid_size\": <[4, 4]>}" \
     | python -c "import sys,json; print(json.load(sys.stdin).get('data',{}).get('task_id','ERROR'))"
   count=$((count+1))
   echo "Submitted: $count"
 done < urls.txt
 ```
+
+For a batch that uses video understanding, set `video_understanding` to `true` and keep `video_interval` / `grid_size` — every task will download the full video and needs valid bilibili cookies.
 
 ~1-2s per task. Resume interrupted batch: `tail -n +<line> urls.txt`.
 

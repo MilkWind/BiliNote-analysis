@@ -40,6 +40,10 @@ class TestBuiltinFallbackModels(unittest.TestCase):
         self.assertIn("deepseek-chat", models)
         self.assertIn("deepseek-reasoner", models)
 
+    def test_ark_by_id_has_vision_fallback(self):
+        models = builtin_fallback_models({"id": "ark", "name": "Volcengine Ark"})
+        self.assertIn("doubao-seed-2-1-pro-260915", models)
+
     def test_match_by_name_case_insensitive(self):
         models = builtin_fallback_models({"id": "whatever-uuid", "name": "deepseek"})
         self.assertIn("deepseek-chat", models)
