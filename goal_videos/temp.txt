@@ -1,1 +1,32 @@
-程序员方格 https://space.bilibili.com/3546980777199728
+bytezhou 音频理解，详细风格 https://space.bilibili.com/28745756
+dadafastrun 音频理解，详细风格 https://space.bilibili.com/443251021
+deepseekharness_（先解析出他发布的所有视频的分P，再对这些分P去重，去完重之后再检索D:\development-projects\personal-projects\persional-knowledge里面有没有“接近完全一样”的笔记标题，再去重，最终剩下的才解析） 图像理解，教程风格 https://space.bilibili.com/620834560
+渡一 前端提薪课精选合集（老规矩，去重后再解析） 图片理解，教程风格 https://space.bilibili.com/666759136/lists/8483659
+小张阿姨的AI教学 图像理解，文稿转写，详细风格 https://space.bilibili.com/348543296
+泽希讲求职 音频理解，文稿转写，详细风格 https://space.bilibili.com/3546692477520851
+ezindie小产品变现 音频理解，文稿转写，详细风格 https://space.bilibili.com/395127673
+炟烨 城市观察合集 音频理解，文稿转写，详细风格 https://space.bilibili.com/2017204408/lists/8582873
+瓜子项目社 图像理解，文稿转写，详细风格 https://space.bilibili.com/3546785467337088
+温少创业记 音频理解，文稿转写，详细风格 https://space.bilibili.com/3546970553584384
+喵类思维 音频理解，文稿转写，详细风格 https://space.bilibili.com/1092054950
+思维实验室 2025年至2026年的视频，音频理解，文稿转写，详细风格 https://space.bilibili.com/14583962
+你要相信光的呀哦 音频理解，文稿转写，详细风格 https://space.bilibili.com/3546927803140311
+小鱼爱配音x 音频理解，文稿转写，详细风格 https://space.bilibili.com/194021667
+AI深海圈 音频理解，文稿转写，详细风格 https://space.bilibili.com/3690998536341747
+我捞捞捞（仅解析2026年的，非小说、影视类视频） 音频理解，文稿转写，详细风格 https://space.bilibili.com/693612555
+程序员Web3社区 音频理解，文稿转写，详细风格 https://space.bilibili.com/3546883165259823
+大雨说Java 音频理解，教程风格 https://space.bilibili.com/3546669039749947
+与书籍度过漫长岁月 音频理解，文稿转写，详细风格 https://space.bilibili.com/252099076
+老猫乔諵 我在B站做UP合集 音频理解，文稿转写，详细风格 https://space.bilibili.com/1007603480/lists/6683044
+前端小码哥 图像理解，教程风格 https://space.bilibili.com/3546719360911487
+高江子 图像理解，文稿转写，详细风格 https://space.bilibili.com/11294180
+熠辉IndieDev 图像理解，文稿转写，详细风格 https://space.bilibili.com/39930228
+PlanJ_ 音频理解，文稿转写，详细风格 https://space.bilibili.com/3546982400396253
+
+笔记待生成合集
+BV1vK9eBREyD 音频理解，文稿转写，详细风格
+BV1Hhpu6pEa1 音频理解，文稿转写，详细风格
+BV19rpE6iEpN 图像理解，文稿转写，详细风格
+BV1Zka56QEsv 音频理解，文稿转写，详细风格
+BV154426xEha 图像理解，文稿转写，详细风格
+BV1Tit86MECG 音频理解，文稿转写，详细风格

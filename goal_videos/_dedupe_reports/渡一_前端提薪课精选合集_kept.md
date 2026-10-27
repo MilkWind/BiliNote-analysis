@@ -1,0 +1,96 @@
+# 保留条目：渡一 前端提薪课精选合集
+
+共 90 条（与去重报告同目录）
+
+| # | 分P 标题 | 视频 | URL |
+|---:|---|---|---|
+| 1 | 以同步的方式实现事件监听【渡一教育】 | 以同步的方式实现事件监听【渡一教育】 | https://www.bilibili.com/video/BV17RTp6JE1Q |
+| 2 | 手动解析DOM树【渡一教育】 | 手动解析DOM树【渡一教育】 | https://www.bilibili.com/video/BV17RTp6JE2E |
+| 3 | 如何画一棵随机「树」【渡一教育】 | 如何画一棵随机「树」【渡一教育】 | https://www.bilibili.com/video/BV1ERTp6JE8U |
+| 4 | 重复渐变的边框【渡一教育】 | 重复渐变的边框【渡一教育】 | https://www.bilibili.com/video/BV1ERTp6JEhp |
+| 5 | 协变和逆变【渡一教育】 | 协变和逆变【渡一教育】 | https://www.bilibili.com/video/BV1BRTp6JE6F |
+| 6 | vitepress【渡一教育】 | vitepress【渡一教育】 | https://www.bilibili.com/video/BV14UNj6GEmK |
+| 7 | ESModule的工作原理【渡一教育】 | ESModule的工作原理【渡一教育】 | https://www.bilibili.com/video/BV1tUNj6GEFM |
+| 8 | 用CSS自定义咖啡【渡一教育】 | 用CSS自定义咖啡【渡一教育】 | https://www.bilibili.com/video/BV1tUNj6GE8h |
+| 9 | node的模块查找策略【渡一教育】 | node的模块查找策略【渡一教育】 | https://www.bilibili.com/video/BV1dCNe6zEeA |
+| 10 | 系统级取色器【渡一教育】 | 系统级取色器【渡一教育】 | https://www.bilibili.com/video/BV1jAKJ6eEha |
+| 11 | 文字描边【渡一教育】 | 文字描边【渡一教育】 | https://www.bilibili.com/video/BV1mvKU6NEGg |
+| 12 | 卡片翻转效果【渡一教育】 | 卡片翻转效果【渡一教育】 | https://www.bilibili.com/video/BV1kgK86zEgV |
+| 13 | 函数签名【渡一教育】 | 函数签名【渡一教育】 | https://www.bilibili.com/video/BV1Rngr6KENv |
+| 14 | 图片九宫格【渡一教育】 | 图片九宫格【渡一教育】 | https://www.bilibili.com/video/BV12ugS61E1s |
+| 15 | 使用depcheck进行依赖检查【渡一教育】 | 使用depcheck进行依赖检查【渡一教育】 | https://www.bilibili.com/video/BV138ga6uE9m |
+| 16 | 高亮关键字【渡一教育】 | 高亮关键字【渡一教育】 | https://www.bilibili.com/video/BV14Age6vEKg |
+| 17 | 绝对路径和相对路径【渡一教育】 | 绝对路径和相对路径【渡一教育】 | https://www.bilibili.com/video/BV1bK3c67EBw |
+| 18 | 触发迅雷下载【渡一教育】 | 触发迅雷下载【渡一教育】 | https://www.bilibili.com/video/BV1KR3v6kE4S |
+| 19 | 模拟 material 文本框【渡一教育】 | 模拟 material 文本框【渡一教育】 | https://www.bilibili.com/video/BV1Kv3s61EES |
+| 20 | 动画的暂停和恢复【渡一教育】 | 动画的暂停和恢复【渡一教育】 | https://www.bilibili.com/video/BV1n9Gc6uEtp |
+| 21 | 获取参数和返回值类型【渡一教育】 | 获取参数和返回值类型【渡一教育】 | https://www.bilibili.com/video/BV1XMGw6ZEt9 |
+| 22 | HTMLCollection & NodeList【渡一教育】 | HTMLCollection & NodeList【渡一教育】 | https://www.bilibili.com/video/BV1N2GA6QE2S |
+| 23 | Web性能指标【渡一教育】 | Web性能指标【渡一教育】 | https://www.bilibili.com/video/BV1vBMD6ZE1z |
+| 24 | 字典顺序和编码顺序【渡一教育】 | 字典顺序和编码顺序【渡一教育】 | https://www.bilibili.com/video/BV15kuw6REF9 |
+| 25 | 不要使用计时器做动画【渡一教育】 | 不要使用计时器做动画【渡一教育】 | https://www.bilibili.com/video/BV1FdMk65EVj |
+| 26 | vscode绘图插件【渡一教育】 | vscode绘图插件【渡一教育】 | https://www.bilibili.com/video/BV1xKut6LEPy |
+| 27 | 链式调用和延迟执行【渡一教育】 | 链式调用和延迟执行【渡一教育】 | https://www.bilibili.com/video/BV1NKut6LENz |
+| 28 | 状态仓库持久化【渡一教育】 | 状态仓库持久化【渡一教育】 | https://www.bilibili.com/video/BV1cBub6VEwB |
+| 29 | map和parseInt【渡一教育】 | map和parseInt【渡一教育】 | https://www.bilibili.com/video/BV1XEu96wEpJ |
+| 30 | 小数运算不精确的根源【渡一教育】 | 小数运算不精确的根源【渡一教育】 | https://www.bilibili.com/video/BV1u7gG61EYN |
+| 31 | 妙用位运算【渡一教育】 | 妙用位运算【渡一教育】 | https://www.bilibili.com/video/BV1b7gG61E2g |
+| 32 | 按钮边框的旋转动画【渡一教育】 | 按钮边框的旋转动画【渡一教育】 | https://www.bilibili.com/video/BV1u7gG61E8H |
+| 33 | 使用泛型和keyof约束参数【渡一教育】 | 使用泛型和keyof约束参数【渡一教育】 | https://www.bilibili.com/video/BV1E5gn6SEwK |
+| 34 | 使用冻结对象提升效率【渡一教育】 | 使用冻结对象提升效率【渡一教育】 | https://www.bilibili.com/video/BV1Aqba6uEt8 |
+| 35 | 文本溢出处理【渡一教育】 | 文本溢出处理【渡一教育】 | https://www.bilibili.com/video/BV1Gt8g6fEwe |
+| 36 | 瀑布流布局【渡一教育】 | 瀑布流布局【渡一教育】 | https://www.bilibili.com/video/BV1jg8K6RE5N |
+| 37 | 无法预测的大数运算【渡一教育】 | 无法预测的大数运算【渡一教育】 | https://www.bilibili.com/video/BV1ig8K6REdK |
+| 38 | 变量交换的骚操作【渡一教育】 | 变量交换的骚操作【渡一教育】 | https://www.bilibili.com/video/BV1jg8K6RErT |
+| 39 | 箭头函数的意义【渡一教育】 | 箭头函数的意义【渡一教育】 | https://www.bilibili.com/video/BV1qg8K6REVd |
+| 40 | 监听元素的重叠度【渡一教育】 | 监听元素的重叠度【渡一教育】 | https://www.bilibili.com/video/BV1jg8K6RE3k |
+| 41 | 你不知道的阴影【渡一教育】 | 你不知道的阴影【渡一教育】 | https://www.bilibili.com/video/BV1mshg6REpq |
+| 42 | 视频文字特效【渡一教育】 | 视频文字特效【渡一教育】 | https://www.bilibili.com/video/BV1tE4f6JEhN |
+| 43 | 微软算法题-按键映射【渡一教育】 | 微软算法题-按键映射【渡一教育】 | https://www.bilibili.com/video/BV1mE4f6EELA |
+| 44 | 保持元素宽高比【渡一教育】 | 保持元素宽高比【渡一教育】 | https://www.bilibili.com/video/BV1fStt6SEc2 |
+| 45 | 青蛙跳台阶问题【渡一教育】 | 青蛙跳台阶问题【渡一教育】 | https://www.bilibili.com/video/BV1abtu6pE4X |
+| 46 | Promise的终极面试题【渡一教育】 | Promise的终极面试题【渡一教育】 | https://www.bilibili.com/video/BV1a8tn6nESK |
+| 47 | 循环转递归【渡一教育】 | 循环转递归【渡一教育】 | https://www.bilibili.com/video/BV1MEtd61Ert |
+| 48 | 圆形放大的hover效果【渡一教育】 | 圆形放大的hover效果【渡一教育】 | https://www.bilibili.com/video/BV1s2tR6qEyj |
+| 49 | 字符串比较【渡一教育】 | 字符串比较【渡一教育】 | https://www.bilibili.com/video/BV1s2tR6qEKL |
+| 50 | 中文输入法导致的高频事件【渡一教育】 | 中文输入法导致的高频事件【渡一教育】 | https://www.bilibili.com/video/BV1s2tR6qEtZ |
+| 51 | 再谈多行文本溢出【渡一教育】 | 再谈多行文本溢出【渡一教育】 | https://www.bilibili.com/video/BV1W2tR6qEmR |
+| 52 | 标签化模板【渡一教育】 | 标签化模板【渡一教育】 | https://www.bilibili.com/video/BV1P2tR6BEyw |
+| 53 | 使用chrome调试工具解决问题【渡一教育】 | 使用chrome调试工具解决问题【渡一教育】 | https://www.bilibili.com/video/BV1PJYj6gEhB |
+| 54 | CSS实现奥林匹克五环【渡一教育】 | CSS实现奥林匹克五环【渡一教育】 | https://www.bilibili.com/video/BV1PJYj6gE31 |
+| 55 | network选项卡【渡一教育】 | network选项卡【渡一教育】 | https://www.bilibili.com/video/BV1HWYj6qEph |
+| 56 | 磨砂玻璃效果【渡一教育】 | 磨砂玻璃效果【渡一教育】 | https://www.bilibili.com/video/BV1wWYj6qEHa |
+| 57 | 视频文本化【渡一教育】 | 视频文本化【渡一教育】 | https://www.bilibili.com/video/BV1fWeE6MEE4 |
+| 58 | 验证回文串【渡一教育】 | 验证回文串【渡一教育】 | https://www.bilibili.com/video/BV1Vrew6DEdw |
+| 59 | Cookie中的SameSite【渡一教育】 | Cookie中的SameSite【渡一教育】 | https://www.bilibili.com/video/BV1mheg6hEKZ |
+| 60 | 你不知道的console【渡一教育】 | 你不知道的console【渡一教育】 | https://www.bilibili.com/video/BV1nte16nEjS |
+| 61 | 使用sources进行断点调试【渡一教育】 | 使用sources进行断点调试【渡一教育】 | https://www.bilibili.com/video/BV1UShi6YEUv |
+| 62 | 让文字立起来【渡一教育】 | 让文字立起来【渡一教育】 | https://www.bilibili.com/video/BV1yWh76BEQ4 |
+| 63 | JS引擎线程并不存在【渡一教育】 | JS引擎线程并不存在【渡一教育】 | https://www.bilibili.com/video/BV1oVhx67EvW |
+| 64 | 无限递归一定会溢栈吗？【渡一教育】 | 无限递归一定会溢栈吗？【渡一教育】 | https://www.bilibili.com/video/BV1k2ht6YE1V |
+| 65 | 随机数的求整函数【渡一教育】 | 随机数的求整函数【渡一教育】 | https://www.bilibili.com/video/BV1k2ht6YESJ |
+| 66 | 这个表达式是真“nb”【渡一教育】 | 这个表达式是真“nb”【渡一教育】 | https://www.bilibili.com/video/BV1H2ht6aEo8 |
+| 67 | 使用阴影画图【渡一教育】 | 使用阴影画图【渡一教育】 | https://www.bilibili.com/video/BV1RxaP6XEzo |
+| 68 | Performance选项卡【渡一教育】 | Performance选项卡【渡一教育】 | https://www.bilibili.com/video/BV1JDa36SE2t |
+| 69 | 一道丧心病狂的面试题【渡一教育】 | 一道丧心病狂的面试题【渡一教育】 | https://www.bilibili.com/video/BV182aJ6sEuH |
+| 70 | 属性不可遍历【渡一教育】 | 属性不可遍历【渡一教育】 | https://www.bilibili.com/video/BV15oaX6oEeX |
+| 71 | 打包结果分析工具【渡一教育】 | 打包结果分析工具【渡一教育】 | https://www.bilibili.com/video/BV19oaX6dEXV |
+| 72 | 统计字符频率的风骚写法【渡一教育】 | 统计字符频率的风骚写法【渡一教育】 | https://www.bilibili.com/video/BV1KqaR6EEgQ |
+| 73 | class转function【渡一教育】 | class转function【渡一教育】 | https://www.bilibili.com/video/BV14dpT6tEnr |
+| 74 | 极简精妙的JS代码片段【渡一教育】 | 极简精妙的JS代码片段【渡一教育】 | https://www.bilibili.com/video/BV1pdHQ6GEL7 |
+| 75 | Vue中的类型问题【渡一教育】 | Vue中的类型问题【渡一教育】 | https://www.bilibili.com/video/BV1cCp46MEpC |
+| 76 | 数组的交集并集差集【渡一教育】 | 数组的交集并集差集【渡一教育】 | https://www.bilibili.com/video/BV1DApt6WE8b |
+| 77 | useTemplateRef【渡一教育】 | useTemplateRef【渡一教育】 | https://www.bilibili.com/video/BV1Qcpt6REUW |
+| 78 | import-cost插件【渡一教育】 | import-cost插件【渡一教育】 | https://www.bilibili.com/video/BV1ehpv6EEhY |
+| 79 | 使用代理拦截动态属性【渡一教育】 | 使用代理拦截动态属性【渡一教育】 | https://www.bilibili.com/video/BV1ZBpR65E4U |
+| 80 | 请求的取消【渡一教育】 | 请求的取消【渡一教育】 | https://www.bilibili.com/video/BV1VpWA6tEFs |
+| 81 | CommonJS的本质【渡一教育】 | CommonJS的本质【渡一教育】 | https://www.bilibili.com/video/BV1Kwpy6FEQK |
+| 82 | Promise.try【渡一教育】 | Promise.try【渡一教育】 | https://www.bilibili.com/video/BV1ktJ16JExT |
+| 83 | ConsoleImporter插件【渡一教育】 | ConsoleImporter插件【渡一教育】 | https://www.bilibili.com/video/BV1rtJ16JER3 |
+| 84 | 谢谢你发明了JS【渡一教育】 | 谢谢你发明了JS【渡一教育】 | https://www.bilibili.com/video/BV1CxJ16DE4j |
+| 85 | 展示组件和容器组件【渡一教育】 | 展示组件和容器组件【渡一教育】 | https://www.bilibili.com/video/BV1PfJX6GE5v |
+| 86 | let和var的区别【渡一教育】 | let和var的区别【渡一教育】 | https://www.bilibili.com/video/BV1Gann6eEHq |
+| 87 | 无缝轮播【渡一教育】 | 无缝轮播【渡一教育】 | https://www.bilibili.com/video/BV1YEnq67Eta |
+| 88 | 妙用CSS变量【渡一教育】 | 妙用CSS变量【渡一教育】 | https://www.bilibili.com/video/BV1DDnb6WEM2 |
+| 89 | 弹性盒的异形布局【渡一教育】 | 弹性盒的异形布局【渡一教育】 | https://www.bilibili.com/video/BV1Ujn96XEoA |
+| 90 | 行为验证【渡一教育】 | 行为验证【渡一教育】 | https://www.bilibili.com/video/BV1CMxM6FEKb |
