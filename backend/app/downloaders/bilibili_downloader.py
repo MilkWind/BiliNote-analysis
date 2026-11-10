@@ -3,6 +3,7 @@ import json
 import logging
 import tempfile
 from abc import ABC
+from dataclasses import asdict, fields
 from typing import Union, Optional, List
 
 import yt_dlp
@@ -13,7 +14,7 @@ from app.downloaders.bilibili_subtitle import BilibiliSubtitleFetcher
 from app.models.notes_model import AudioDownloadResult
 from app.models.transcriber_model import TranscriptResult, TranscriptSegment
 from app.utils.path_helper import get_data_dir
-from app.utils.url_parser import extract_video_id
+from app.utils.url_parser import extract_video_id, extract_bilibili_p_number
 from app.services.cookie_manager import CookieConfigManager
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,41 @@ class BilibiliDownloader(Downloader, ABC):
         logger.info("已生成 B站 Netscape Cookie 文件: %s (条目: %d)", tmp.name, len(lines) - 1)
         return tmp.name
 
+    @staticmethod
+    def _cache_video_id(video_url: str) -> Optional[str]:
+        """Cache key for this URL: BV... for a normal video, BV..._pN for a 分P."""
+        vid = extract_video_id(video_url, "bilibili")
+        if not vid:
+            return None
+        p = extract_bilibili_p_number(video_url)
+        return f"{vid}_p{p}" if p else vid
+
+    @staticmethod
+    def _load_audio_cache(audio_path: str, meta_path: str) -> Optional[AudioDownloadResult]:
+        """Return a cached AudioDownloadResult when both mp3 and metadata exist."""
+        if not (os.path.exists(audio_path) and os.path.exists(meta_path)):
+            return None
+        try:
+            data = json.loads(open(meta_path, "r", encoding="utf-8").read())
+            allowed = {f.name for f in fields(AudioDownloadResult)}
+            data = {k: v for k, v in data.items() if k in allowed}
+            data["file_path"] = audio_path
+            return AudioDownloadResult(**data)
+        except Exception as e:
+            logger.warning("读取音频缓存元数据失败 (%s): %s", meta_path, e)
+            return None
+
+    @staticmethod
+    def _save_audio_cache(result: AudioDownloadResult) -> None:
+        if not result.file_path:
+            return
+        meta_path = os.path.splitext(result.file_path)[0] + ".meta.json"
+        try:
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(asdict(result), f, ensure_ascii=False, default=str)
+        except Exception as e:
+            logger.warning("保存音频缓存元数据失败 (%s): %s", meta_path, e)
+
     def download(
         self,
         video_url: str,
@@ -60,6 +96,16 @@ class BilibiliDownloader(Downloader, ABC):
         if not output_dir:
             output_dir=self.cache_data
         os.makedirs(output_dir, exist_ok=True)
+
+        cache_id = self._cache_video_id(video_url)
+        if not skip_download and cache_id:
+            cached = self._load_audio_cache(
+                os.path.join(output_dir, f"{cache_id}.mp3"),
+                os.path.join(output_dir, f"{cache_id}.meta.json"),
+            )
+            if cached:
+                logger.info("命中音频缓存: %s", cached.file_path)
+                return cached
 
         output_path = os.path.join(output_dir, "%(id)s.%(ext)s")
 
@@ -90,7 +136,7 @@ class BilibiliDownloader(Downloader, ABC):
             cover_url = info.get("thumbnail")
             audio_path = os.path.join(output_dir, f"{video_id}.mp3")
 
-        return AudioDownloadResult(
+        result = AudioDownloadResult(
             file_path=audio_path if not skip_download else None,
             title=title,
             duration=duration,
@@ -100,6 +146,13 @@ class BilibiliDownloader(Downloader, ABC):
             raw_info=info,
             video_path=None
         )
+        if not skip_download and cache_id and result.file_path:
+            expected = os.path.join(output_dir, f"{cache_id}.mp3")
+            if result.file_path != expected and os.path.exists(result.file_path):
+                os.replace(result.file_path, expected)
+                result.file_path = expected
+            self._save_audio_cache(result)
+        return result
 
     def download_video(
         self,
@@ -114,7 +167,8 @@ class BilibiliDownloader(Downloader, ABC):
             output_dir = get_data_dir()
         os.makedirs(output_dir, exist_ok=True)
         print("video_url",video_url)
-        video_id=extract_video_id(video_url, "bilibili")
+        cache_id = self._cache_video_id(video_url)
+        video_id = cache_id or extract_video_id(video_url, "bilibili")
         video_path = os.path.join(output_dir, f"{video_id}.mp4")
         if os.path.exists(video_path):
             return video_path
@@ -124,9 +178,25 @@ class BilibiliDownloader(Downloader, ABC):
 
         output_path = os.path.join(output_dir, "%(id)s.%(ext)s")
 
+        # Video-understanding grids are downscaled to 960x540 cells, so a
+        # 1080p/4K source is unnecessary. BILINOTE_VIDEO_MAX_HEIGHT lets the
+        # batch cap the download height (e.g. 720) and cut transfer volume.
+        try:
+            max_height = int(os.getenv("BILINOTE_VIDEO_MAX_HEIGHT", "0") or 0)
+        except ValueError:
+            max_height = 0
+        if max_height > 0:
+            video_format = (
+                f"bv*[height<={max_height}][ext=mp4]"
+                f"/bestvideo[height<={max_height}]+bestaudio"
+                f"/best[height<={max_height}]/best"
+            )
+        else:
+            video_format = "bv*[ext=mp4]/bestvideo+bestaudio/best"
+
         ydl_opts = {
             **YDL_RETRY_OPTS,
-            'format': 'bv*[ext=mp4]/bestvideo+bestaudio/best',
+            'format': video_format,
             'outtmpl': output_path,
             'http_headers': {'Referer': 'https://www.bilibili.com'},
             'noplaylist': True,
@@ -143,6 +213,12 @@ class BilibiliDownloader(Downloader, ABC):
 
         if not os.path.exists(video_path):
             raise FileNotFoundError(f"视频文件未找到: {video_path}")
+
+        if cache_id:
+            expected = os.path.join(output_dir, f"{cache_id}.mp4")
+            if video_path != expected and os.path.exists(video_path) and not os.path.exists(expected):
+                os.replace(video_path, expected)
+            video_path = expected
 
         return video_path
 
